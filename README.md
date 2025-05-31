@@ -104,16 +104,30 @@ FalAI 是一个基于 [FAL.AI](https://fal.ai/) API 的高级图像生成应用�
 
 应用需要 FAL.AI API 密钥才能正常工作。您可以通过以下方式配置密钥：
 
-1. **本地开发环境变量**：在 `.env` 文件中设置 `VITE_FAL_API_KEYS`
-2. **Vercel 部署环境变量**：在 Vercel 项目仓库的设置页面中，进入 "Environment Variables" 部分添加 `VITE_FAL_API_KEYS` 变量
+1. **密钥文件URL（推荐）**：在 `.env` 文件中设置 `VITE_FAL_API_KEYS_URL`，指向包含API密钥的文件URL
+2. **Vercel 部署环境变量**：在 Vercel 项目仓库的设置页面中，进入 "Environment Variables" 部分添加 `VITE_FAL_API_KEYS_URL` 变量
 3. **用户界面**：通过应用内的 API 密钥管理界面添加密钥
 
-多个 API 密钥可以用逗号分隔：
+### 密钥文件格式
+
+密钥文件应该是纯文本格式，每行一个API密钥：
 ```
-VITE_FAL_API_KEYS=key1,key2,key3
+9263a18e-28f9-4af7-9905-0f17621d4d3a:04ee433e91cdd23e5ac116231a954819
+9263a18e-28f9-4af7-9905-0f17621d4d3a:04ee433e91cdd23e5ac116231a954810
+fal.xxxxxx
+fal.yyyyyy
+```
+
+### 环境变量配置示例
+
+```bash
+# 配置密钥文件URL
+VITE_FAL_API_KEYS_URL=https://example.com/api-keys.txt
 ```
 
 > **重要提示：** 如果您在 Vercel 上部署应用，必须在 Vercel 项目仓库的设置页面中配置环境变量，而不是仅仅依赖于 `.env` 文件。这是因为在构建过程中，`.env` 文件中的变量可能不会被正确地应用到部署环境中。
+
+> **安全提示：** 确保您的密钥文件URL是安全的，建议使用HTTPS协议，并考虑添加访问控制以防止密钥泄露。
 
 ## 📱 移动端支持
 

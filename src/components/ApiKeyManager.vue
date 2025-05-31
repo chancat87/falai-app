@@ -12,12 +12,13 @@ import { toast } from 'vue-sonner';
 import { fal } from "@fal-ai/client";
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { fetchApiKeysFromUrl } from '@/services/api-key-manager';
 
 // 常量
 const API_KEYS_STORAGE_KEY = 'fal-ai-api-keys';
 const ACTIVE_KEY_INDEX_STORAGE_KEY = 'fal-ai-active-key-index';
 const ACTIVE_KEY_STORAGE_KEY = 'fal-ai-active-key'; // 存储当前活动密钥的值
-const CONFIG_FILE_PATH = import.meta.env.VITE_FAL_API_KEYS || '';
+const API_KEYS_URL = import.meta.env.VITE_FAL_API_KEYS_URL || '';
 
 // 类型
 interface ApiKeyInfo {
@@ -138,21 +139,26 @@ onMounted(async () => {
     }
   }
 
-  // 从环境变量加载系统密钥
-  if (CONFIG_FILE_PATH) {
-    const systemKeys = CONFIG_FILE_PATH.split(',').map((key: string) => key.trim()).filter(Boolean);
+  // 从URL拉取系统密钥
+  if (API_KEYS_URL) {
+    try {
+      const systemKeys = await fetchApiKeysFromUrl();
 
-    // 检查系统密钥是否已存在
-    for (const systemKey of systemKeys) {
-      const exists = keys.some(k => k.key === systemKey);
-      if (!exists) {
-        keys.push({
-          key: systemKey,
-          name: `密钥 ${keys.length + 1}`,
-          isSystem: true,
-          group: '默认组'
-        });
+      // 检查系统密钥是否已存在
+      for (const systemKey of systemKeys) {
+        const exists = keys.some(k => k.key === systemKey);
+        if (!exists) {
+          keys.push({
+            key: systemKey,
+            name: `密钥 ${keys.length + 1}`,
+            isSystem: true,
+            group: '默认组'
+          });
+        }
       }
+    } catch (error) {
+      console.error('从URL加载系统密钥失败:', error);
+      toast.error('从URL加载系统密钥失败');
     }
   }
 
